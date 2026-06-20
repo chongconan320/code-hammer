@@ -1,6 +1,6 @@
 "use client";
 
-import { useWorkspace } from "./workspace-console";
+import { useWorkspace } from "@/app/workspace/workspace-console";
 
 /* ── Icons ── */
 const Icon = {

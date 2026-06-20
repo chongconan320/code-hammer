@@ -3,6 +3,16 @@
   "compilerOptions": {
     "allowJs": true,
     "incremental": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@code-hammer/shared": ["../../packages/shared/src/index.ts"],
+      "@code-hammer/config": ["../../packages/config/src/index.ts"],
+      "@code-hammer/db": ["../../packages/db/src/index.ts"],
+      "@code-hammer/ai": ["../../packages/ai/src/index.ts"],
+      "@code-hammer/queue": ["../../packages/queue/src/index.ts"],
+      "@code-hammer/integrations": ["../../packages/integrations/src/index.ts"]
+    },
     "plugins": [
       {
         "name": "next"

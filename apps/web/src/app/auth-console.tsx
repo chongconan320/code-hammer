@@ -1,22 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "../components/ui/button";
-import { Card, CardHeader, CardTitle } from "../components/ui/card";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   type Locale,
   dictionaries,
   isLocale,
   localeLabels,
   locales,
-} from "../i18n";
+} from "@/i18n";
 import {
   apiRequest,
   getStoredLocale,
   localeStorageKey,
-} from "./client-helpers";
+} from "@/app/client-helpers";
 
 type AuthMode = "signin" | "signup";
 

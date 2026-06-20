@@ -3,8 +3,8 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { WorkspaceProvider, useWorkspace } from "./workspace-console";
-import { locales, localeLabels } from "../../i18n";
+import { WorkspaceProvider, useWorkspace } from "@/app/workspace/workspace-console";
+import { locales, localeLabels } from "@/i18n";
 
 /* ── Icons (inline SVGs to avoid extra deps) ── */
 

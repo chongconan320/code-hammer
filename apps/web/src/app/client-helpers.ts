@@ -1,5 +1,5 @@
-import type { Locale } from "../i18n";
-import { isLocale } from "../i18n";
+import type { Locale } from "@/i18n";
+import { isLocale } from "@/i18n";
 
 export type PublicUser = {
   id: string;

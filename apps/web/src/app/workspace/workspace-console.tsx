@@ -8,14 +8,14 @@ import {
   useState,
 } from "react";
 import type { ReactNode } from "react";
-import { type Locale, dictionaries, isLocale } from "../../i18n";
+import { type Locale, dictionaries, isLocale } from "@/i18n";
 import {
   type PublicUser,
   type TenantSnapshot,
   apiRequest,
   getStoredLocale,
   localeStorageKey,
-} from "../client-helpers";
+} from "@/app/client-helpers";
 
 /* ── Context shape ── */
 

@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useWorkspace } from "../workspace-console";
-import { Button } from "../../../components/ui/button";
-import { Input } from "../../../components/ui/input";
+import { useWorkspace } from "@/app/workspace/workspace-console";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function ProfilePage() {
   const { t, user, saveProfile } = useWorkspace();
