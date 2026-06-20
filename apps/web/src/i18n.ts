@@ -15,14 +15,9 @@ export function isLocale(value: string): value is Locale {
 const englishDictionary = {
   brand: "Code Hammer",
   auth: {
-    heroTitle: "Your AI back office workspace.",
-    heroBody:
-      "Manage documents, workflows, integrations, and customer operations from one focused portal.",
-    capabilities: [
-      "Document intelligence",
-      "Workflow automation",
-      "Knowledge search",
-    ],
+    heroTitle: "Code Hammer",
+    heroBody: "A calm operating portal for modern SME work.",
+    brandInitials: "CH",
     workspaceAccess: "Workspace access",
     signInTitle: "Sign in to continue",
     signUpTitle: "Create workspace",
@@ -95,9 +90,9 @@ export const dictionaries = {
   "zh-CN": {
     brand: "Code Hammer",
     auth: {
-      heroTitle: "你的 AI 后台工作区。",
-      heroBody: "在一个专注的门户中管理文档、流程、集成和客户运营。",
-      capabilities: ["文档智能", "流程自动化", "知识搜索"],
+      heroTitle: "Code Hammer",
+      heroBody: "为现代中小企业打造的沉稳运营门户。",
+      brandInitials: "CH",
       workspaceAccess: "工作区访问",
       signInTitle: "登录以继续",
       signUpTitle: "创建工作区",
@@ -161,14 +156,9 @@ export const dictionaries = {
   ms: {
     brand: "Code Hammer",
     auth: {
-      heroTitle: "Ruang kerja back office AI anda.",
-      heroBody:
-        "Urus dokumen, aliran kerja, integrasi dan operasi pelanggan dalam satu portal fokus.",
-      capabilities: [
-        "Kecerdasan dokumen",
-        "Automasi aliran kerja",
-        "Carian ilmu",
-      ],
+      heroTitle: "Code Hammer",
+      heroBody: "Portal operasi yang tenang untuk kerja SME moden.",
+      brandInitials: "CH",
       workspaceAccess: "Akses ruang kerja",
       signInTitle: "Log masuk untuk teruskan",
       signUpTitle: "Cipta ruang kerja",

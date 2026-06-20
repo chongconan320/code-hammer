@@ -26,9 +26,24 @@ type PublicUser = {
 type AuthMode = "signin" | "signup";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001";
+const localeStorageKey = "code-hammer-locale";
+const brandTiles = [
+  "top-left",
+  "top-center-left",
+  "top-center-right",
+  "top-right",
+  "middle-left",
+  "middle-center-left",
+  "middle-center-right",
+  "middle-right",
+  "bottom-left",
+  "bottom-center-left",
+  "bottom-center-right",
+  "bottom-right",
+] as const;
 
 export function AuthConsole() {
-  const [locale, setLocale] = useState<Locale>("en");
+  const [locale, setLocale] = useState<Locale>(getStoredLocale);
   const [mode, setMode] = useState<AuthMode>("signin");
   const [name, setName] = useState("Conan Chong");
   const [email, setEmail] = useState("conan@example.com");
@@ -36,7 +51,9 @@ export function AuthConsole() {
   const [timezone, setTimezone] = useState("Asia/Kuala_Lumpur");
   const [emailUpdates, setEmailUpdates] = useState(true);
   const [user, setUser] = useState<PublicUser | null>(null);
-  const [message, setMessage] = useState(dictionaries.en.auth.defaultMessage);
+  const [message, setMessage] = useState(
+    () => dictionaries[getStoredLocale()].auth.defaultMessage,
+  );
   const t = dictionaries[locale];
 
   async function submitAuth() {
@@ -137,6 +154,7 @@ export function AuthConsole() {
     }
 
     setLocale(value);
+    localStorage.setItem(localeStorageKey, value);
     setMessage(dictionaries[value].auth.defaultMessage);
   }
 
@@ -314,15 +332,22 @@ export function AuthConsole() {
             </p>
           </div>
 
-          <div className="mt-8 grid gap-2 text-sm text-sidebar-muted">
-            {t.auth.capabilities.map((item) => (
-              <div
-                className="rounded-md border border-sidebar-border px-3 py-2"
-                key={item}
-              >
-                {item}
-              </div>
-            ))}
+          <div className="mt-10 grid gap-4">
+            <div className="grid size-24 place-items-center rounded-lg border border-sidebar-border bg-sidebar-foreground/10 text-3xl font-semibold">
+              {t.auth.brandInitials}
+            </div>
+            <div className="grid grid-cols-4 gap-2" aria-hidden="true">
+              {brandTiles.map((tile, index) => (
+                <div
+                  className={
+                    index === 5 || index === 10
+                      ? "h-8 rounded-md bg-primary"
+                      : "h-8 rounded-md border border-sidebar-border bg-sidebar-foreground/5"
+                  }
+                  key={tile}
+                />
+              ))}
+            </div>
           </div>
         </div>
 
@@ -336,21 +361,6 @@ export function AuthConsole() {
                 {mode === "signin" ? t.auth.signInTitle : t.auth.signUpTitle}
               </CardTitle>
             </CardHeader>
-
-            <Label className="mb-4">
-              {t.fields.language}
-              <select
-                className="min-h-10 w-full rounded-md border border-border bg-card px-3 text-sm outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
-                onChange={(event) => changeLocale(event.target.value)}
-                value={locale}
-              >
-                {locales.map((item) => (
-                  <option key={item} value={item}>
-                    {localeLabels[item]}
-                  </option>
-                ))}
-              </select>
-            </Label>
 
             <div className="mb-5 grid grid-cols-2 gap-2 rounded-md bg-muted p-1">
               <Button
@@ -440,6 +450,16 @@ export function AuthConsole() {
       </section>
     </main>
   );
+}
+
+function getStoredLocale(): Locale {
+  if (typeof window === "undefined") {
+    return "en";
+  }
+
+  const storedLocale = window.localStorage.getItem(localeStorageKey);
+
+  return storedLocale && isLocale(storedLocale) ? storedLocale : "en";
 }
 
 async function apiRequest(
