@@ -1,0 +1,20 @@
+{
+  "name": "code-hammer",
+  "private": true,
+  "version": "0.0.0",
+  "packageManager": "bun@1.3.14",
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "bun run scripts/check-workspace.ts build && turbo run build",
+    "lint": "bun run scripts/check-workspace.ts lint && biome check .",
+    "format": "bun run scripts/check-workspace.ts format && biome format . --write",
+    "typecheck": "bun run scripts/check-workspace.ts typecheck && turbo run typecheck",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "turbo": "^2.5.8",
+    "typescript": "^5.7.3"
+  }
+}

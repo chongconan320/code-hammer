@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "jsx": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@code-hammer/shared": ["packages/shared/src/index.ts"],
+      "@code-hammer/config": ["packages/config/src/index.ts"],
+      "@code-hammer/db": ["packages/db/src/index.ts"],
+      "@code-hammer/ai": ["packages/ai/src/index.ts"],
+      "@code-hammer/queue": ["packages/queue/src/index.ts"],
+      "@code-hammer/integrations": ["packages/integrations/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "dist", ".next"]
+}
