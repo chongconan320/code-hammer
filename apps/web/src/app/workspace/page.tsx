@@ -28,7 +28,7 @@ export default function WorkspaceOverviewPage() {
   ];
 
   return (
-    <div>
+    <div className="xl:max-w-[1440px] xl:mx-auto">
       {/* Tenant banner */}
       <div className="flex flex-col justify-between gap-4 rounded-lg border border-border bg-card p-5 shadow-sm md:flex-row md:items-start">
         <div>

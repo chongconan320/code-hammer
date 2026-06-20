@@ -26,14 +26,16 @@ export default function WorkspaceSettingsPage() {
           workspaceName: wsName,
           workspaceDisplayName: display,
         });
-    setMsg(err ?? (tenant ? t.portal.workspaceSaved : t.portal.workspaceCreated));
+    setMsg(
+      err ?? (tenant ? t.portal.workspaceSaved : t.portal.workspaceCreated),
+    );
     setBusy(false);
   }
 
   const isOwner = tenant?.membership.role === "owner";
 
   return (
-    <div className="max-w-xl rounded-lg border border-border bg-card p-6 shadow-sm">
+    <div className="max-w-2xl rounded-lg border border-border bg-card p-6 shadow-sm xl:max-w-3xl xl:mx-auto">
       <h3 className="text-base font-semibold">{t.portal.workspaceSettings}</h3>
       <p className="mt-1 text-sm text-muted-foreground">
         Configure your organization and workspace details.
@@ -81,11 +83,7 @@ export default function WorkspaceSettingsPage() {
           </p>
         </div>
 
-        <Button
-          onClick={handleSave}
-          disabled={busy || !isOwner}
-          type="button"
-        >
+        <Button onClick={handleSave} disabled={busy || !isOwner} type="button">
           {busy
             ? t.portal.saving
             : tenant
@@ -99,9 +97,7 @@ export default function WorkspaceSettingsPage() {
           </p>
         )}
 
-        {msg ? (
-          <p className="text-sm text-muted-foreground">{msg}</p>
-        ) : null}
+        {msg ? <p className="text-sm text-muted-foreground">{msg}</p> : null}
       </div>
     </div>
   );

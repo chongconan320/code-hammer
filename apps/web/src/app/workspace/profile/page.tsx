@@ -29,7 +29,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="max-w-xl rounded-lg border border-border bg-card p-6 shadow-sm">
+    <div className="max-w-2xl rounded-lg border border-border bg-card p-6 shadow-sm xl:max-w-3xl xl:mx-auto">
       <h3 className="text-base font-semibold">{t.portal.profile}</h3>
       <p className="mt-1 text-sm text-muted-foreground">
         Update your personal information and preferences.
@@ -79,9 +79,7 @@ export default function ProfilePage() {
           {busy ? t.portal.saving : t.fields.saveChanges}
         </Button>
 
-        {msg ? (
-          <p className="text-sm text-muted-foreground">{msg}</p>
-        ) : null}
+        {msg ? <p className="text-sm text-muted-foreground">{msg}</p> : null}
       </div>
     </div>
   );

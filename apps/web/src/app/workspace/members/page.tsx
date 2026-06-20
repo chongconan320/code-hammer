@@ -27,7 +27,7 @@ export default function MembersPage() {
   }
 
   return (
-    <div className="max-w-3xl rounded-lg border border-border bg-card shadow-sm">
+    <div className="rounded-lg border border-border bg-card shadow-sm xl:max-w-[1440px] xl:mx-auto">
       <div className="border-b border-border p-5">
         <h3 className="text-base font-semibold">{t.portal.members}</h3>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -46,7 +46,10 @@ export default function MembersPage() {
         </thead>
         <tbody>
           {tenant?.memberships.map((m, i) => (
-            <tr key={m.userId} className="border-b border-border last:border-b-0">
+            <tr
+              key={m.userId}
+              className="border-b border-border last:border-b-0"
+            >
               <td className="px-4 py-2.5 text-sm font-semibold">
                 {m.role === "owner" ? "Owner" : `Member ${i}`}
               </td>
@@ -68,7 +71,10 @@ export default function MembersPage() {
           ))}
           {(!tenant?.memberships || tenant.memberships.length === 0) && (
             <tr>
-              <td colSpan={3} className="px-4 py-8 text-center text-sm text-muted-foreground">
+              <td
+                colSpan={3}
+                className="px-4 py-8 text-center text-sm text-muted-foreground"
+              >
                 No members yet.
               </td>
             </tr>
