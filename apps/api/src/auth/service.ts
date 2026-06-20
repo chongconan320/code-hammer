@@ -105,6 +105,11 @@ export class AuthService {
     return user ? toPublicUser(user) : undefined;
   }
 
+  async findPublicUserByEmail(emailInput: string) {
+    const user = this.findUserByEmail(emailInput);
+    return user ? toPublicUser(user) : undefined;
+  }
+
   async updateProfile(token: string | undefined, input: UpdateProfileRequest) {
     const session = token ? this.sessionsByToken.get(token) : undefined;
     if (!session || session.expiresAt.getTime() < Date.now()) {

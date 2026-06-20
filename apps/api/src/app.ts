@@ -6,6 +6,7 @@ import { registerAuthRoutes } from "./routes/auth";
 import { registerHealthRoutes } from "./routes/health";
 import { registerOpenApiRoutes } from "./routes/openapi";
 import { registerProfileRoutes } from "./routes/profile";
+import { registerTenantRoutes } from "./routes/tenants";
 
 export function createApiServer(): Express {
   const app = express();
@@ -45,6 +46,7 @@ export function createApiServer(): Express {
   registerAuthRoutes(app);
   registerHealthRoutes(app);
   registerProfileRoutes(app);
+  registerTenantRoutes(app);
 
   return app;
 }

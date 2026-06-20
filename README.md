@@ -51,6 +51,7 @@ This repository starts with `CORE-FR-011: Repository Setup`: a Bun/Turborepo mon
 ## Current Core Features
 
 - `CORE-FR-001`: Authentication and user profile foundation
+- `CORE-FR-002`: Organization, tenant, and workspace foundation
 - `CORE-FR-011`: Repository setup
 
 ## Commands

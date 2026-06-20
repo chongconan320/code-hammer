@@ -66,6 +66,21 @@ test("openapi document includes registered endpoints", async () => {
   expect(body.paths["/auth/signout"].post.operationId).toBe("signOut");
   expect(body.paths["/profile"].get.operationId).toBe("getProfile");
   expect(body.paths["/profile"].patch.operationId).toBe("updateProfile");
+  expect(body.paths["/organizations"].post.operationId).toBe(
+    "createOrganization",
+  );
+  expect(body.paths["/organizations"].get.operationId).toBe(
+    "listOrganizations",
+  );
+  expect(
+    body.paths["/organizations/{organizationId}/members"].post.operationId,
+  ).toBe("addOrganizationMember");
+  expect(body.paths["/workspaces/{workspaceId}"].get.operationId).toBe(
+    "getWorkspace",
+  );
+  expect(
+    body.paths["/workspaces/{workspaceId}/settings"].patch.operationId,
+  ).toBe("updateWorkspaceSettings");
 });
 
 test("auth flow supports signup, profile update, signout, signin, and password reset", async () => {
@@ -208,6 +223,125 @@ test("auth endpoints reject invalid payloads with zod validation errors", async 
   });
 });
 
+test("tenant workspace flow creates owners, denies other tenants, and scopes settings", async () => {
+  const ownerCookie = await signUpCookie(`owner-${Date.now()}@example.com`);
+  const memberEmail = `member-${Date.now()}@example.com`;
+  const memberCookie = await signUpCookie(memberEmail);
+  const outsiderCookie = await signUpCookie(
+    `outsider-${Date.now()}@example.com`,
+  );
+
+  const createResponse = await jsonRequest(
+    "/organizations",
+    {
+      name: "Acme Clinic",
+      workspaceName: "Front Desk",
+      workspaceSettings: {
+        displayName: "Reception",
+        timezone: "Asia/Kuala_Lumpur",
+      },
+    },
+    {
+      cookie: ownerCookie,
+    },
+  );
+  const created = await createResponse.json();
+
+  expect(createResponse.status).toBe(201);
+  expect(created.membership.role).toBe("owner");
+  expect(created.organization.ownerId).toBe(created.membership.userId);
+  expect(created.memberships).toHaveLength(1);
+  expect(created.workspace.name).toBe("Front Desk");
+
+  const addMemberResponse = await jsonRequest(
+    `/organizations/${created.organization.id}/members`,
+    {
+      email: memberEmail,
+    },
+    {
+      cookie: ownerCookie,
+    },
+  );
+  const addedMember = await addMemberResponse.json();
+
+  expect(addMemberResponse.status).toBe(201);
+  expect(addedMember.membership.role).toBe("member");
+  expect(addedMember.membership.organizationId).toBe(created.organization.id);
+
+  const memberReadResponse = await fetch(
+    `${baseUrl}/workspaces/${created.workspace.id}`,
+    {
+      headers: {
+        cookie: memberCookie,
+      },
+    },
+  );
+
+  expect(memberReadResponse.status).toBe(200);
+
+  const memberUpdateResponse = await jsonRequest(
+    `/workspaces/${created.workspace.id}/settings`,
+    {
+      settings: {
+        displayName: "Member Edit",
+      },
+    },
+    {
+      method: "PATCH",
+      cookie: memberCookie,
+    },
+  );
+
+  expect(memberUpdateResponse.status).toBe(403);
+
+  const outsiderReadResponse = await fetch(
+    `${baseUrl}/workspaces/${created.workspace.id}`,
+    {
+      headers: {
+        cookie: outsiderCookie,
+      },
+    },
+  );
+
+  expect(outsiderReadResponse.status).toBe(403);
+
+  const updateResponse = await jsonRequest(
+    `/workspaces/${created.workspace.id}/settings`,
+    {
+      settings: {
+        displayName: "Reception Desk",
+      },
+    },
+    {
+      method: "PATCH",
+      cookie: ownerCookie,
+    },
+  );
+
+  expect(updateResponse.status).toBe(200);
+  expect(await updateResponse.json()).toMatchObject({
+    workspace: {
+      id: created.workspace.id,
+      organizationId: created.organization.id,
+      settings: {
+        displayName: "Reception Desk",
+        timezone: "Asia/Kuala_Lumpur",
+      },
+    },
+  });
+
+  const outsiderListResponse = await fetch(`${baseUrl}/organizations`, {
+    headers: {
+      cookie: outsiderCookie,
+    },
+  });
+
+  expect(outsiderListResponse.status).toBe(200);
+  expect(await outsiderListResponse.json()).toEqual({
+    organizations: [],
+  });
+});
+
 function readSetCookie(response: Response) {
   const cookie = response.headers.get("set-cookie");
   expect(cookie).toBeTruthy();
@@ -230,4 +364,15 @@ function jsonRequest(
     },
     body: JSON.stringify(body),
   });
+}
+
+async function signUpCookie(email: string) {
+  const response = await jsonRequest("/auth/signup", {
+    name: "Tenant Tester",
+    email,
+    password: "strong-password",
+  });
+
+  expect(response.status).toBe(201);
+  return readSetCookie(response);
 }
