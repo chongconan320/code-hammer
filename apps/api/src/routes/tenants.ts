@@ -5,6 +5,7 @@ import {
 } from "@code-hammer/shared";
 import type { Express, Response } from "express";
 import { z } from "zod";
+import { billingService } from "../billing/service";
 import type { AuthenticatedRequest } from "../auth/middleware";
 import { requireAuth } from "../auth/middleware";
 import { authService } from "../auth/service";
@@ -29,6 +30,9 @@ export function registerTenantRoutes(app: Express) {
         (request as AuthenticatedRequest).user.id,
         request.body,
       );
+
+      billingService.createTrialSubscription(result.organization.id);
+      billingService.createUsageRecord(result.organization.id);
 
       response.status(201).json(result);
     },

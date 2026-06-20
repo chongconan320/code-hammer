@@ -3,6 +3,7 @@ import express from "express";
 import swaggerUi from "swagger-ui-express";
 import { openApiDocument } from "./openapi";
 import { registerAuthRoutes } from "./routes/auth";
+import { registerBillingRoutes } from "./routes/billing";
 import { registerHealthRoutes } from "./routes/health";
 import { registerOpenApiRoutes } from "./routes/openapi";
 import { registerProfileRoutes } from "./routes/profile";
@@ -44,6 +45,7 @@ export function createApiServer(): Express {
   app.use("/docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
   registerAuthRoutes(app);
+  registerBillingRoutes(app);
   registerHealthRoutes(app);
   registerProfileRoutes(app);
   registerTenantRoutes(app);

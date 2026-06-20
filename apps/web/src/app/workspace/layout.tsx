@@ -33,6 +33,11 @@ const NAV_ITEMS = [
     labelKey: "profile",
     icon: <Icon icon="lucide:user" width="18" height="18" />,
   },
+  {
+    href: "/workspace/billing",
+    labelKey: "billing",
+    icon: <Icon icon="lucide:credit-card" width="18" height="18" />,
+  },
 ] as const;
 
 const PAGE_TITLES: Record<string, string> = {
@@ -40,6 +45,7 @@ const PAGE_TITLES: Record<string, string> = {
   "/workspace/settings": "Workspace Settings",
   "/workspace/members": "Members",
   "/workspace/profile": "Profile",
+  "/workspace/billing": "Billing",
 };
 
 /* ── Inner shell (has access to context) ── */
@@ -147,7 +153,9 @@ function WorkspaceShell({ children }: { children: ReactNode }) {
                     ? "Settings"
                     : href === "/workspace/members"
                       ? "Members"
-                      : "Profile"}
+                      : href === "/workspace/profile"
+                        ? "Profile"
+                        : "Billing"}
               </Link>
             );
           })}

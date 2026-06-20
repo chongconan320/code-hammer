@@ -1,4 +1,5 @@
 export * from "./auth";
+export * from "./billing";
 export * from "./tenant";
 
 export const databasePackage = {
@@ -11,5 +12,8 @@ export const databasePackage = {
     "users",
     "userSessions",
     "passwordResetTokens",
+    "plans",
+    "subscriptions",
+    "usageRecords",
   ],
 } as const;
