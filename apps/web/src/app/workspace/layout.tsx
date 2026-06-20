@@ -3,39 +3,36 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { WorkspaceProvider, useWorkspace } from "@/app/workspace/workspace-console";
+import { Icon } from "@iconify/react";
+import {
+  WorkspaceProvider,
+  useWorkspace,
+} from "@/app/workspace/workspace-console";
 import { locales, localeLabels } from "@/i18n";
 
-/* ── Icons (inline SVGs to avoid extra deps) ── */
-
-const Icons = {
-  overview: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
-    </svg>
-  ),
-  settings: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="3" /><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
-    </svg>
-  ),
-  members: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 00-3-3.87" /><path d="M16 3.13a4 4 0 010 7.75" />
-    </svg>
-  ),
-  profile: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" />
-    </svg>
-  ),
-} as const;
+/* ── Sidebar nav items ── */
 
 const NAV_ITEMS = [
-  { href: "/workspace", labelKey: "overview", icon: Icons.overview },
-  { href: "/workspace/settings", labelKey: "settings", icon: Icons.settings },
-  { href: "/workspace/members", labelKey: "members", icon: Icons.members },
-  { href: "/workspace/profile", labelKey: "profile", icon: Icons.profile },
+  {
+    href: "/workspace",
+    labelKey: "overview",
+    icon: <Icon icon="lucide:layout-dashboard" width="18" height="18" />,
+  },
+  {
+    href: "/workspace/settings",
+    labelKey: "settings",
+    icon: <Icon icon="lucide:settings" width="18" height="18" />,
+  },
+  {
+    href: "/workspace/members",
+    labelKey: "members",
+    icon: <Icon icon="lucide:users" width="18" height="18" />,
+  },
+  {
+    href: "/workspace/profile",
+    labelKey: "profile",
+    icon: <Icon icon="lucide:user" width="18" height="18" />,
+  },
 ] as const;
 
 const PAGE_TITLES: Record<string, string> = {
@@ -106,7 +103,9 @@ function WorkspaceShell({ children }: { children: ReactNode }) {
         </div>
 
         {/* Nav */}
-        <nav style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+        <nav
+          style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}
+        >
           <span
             style={{
               fontSize: "0.6875rem",
@@ -136,9 +135,7 @@ function WorkspaceShell({ children }: { children: ReactNode }) {
                   color: active
                     ? "hsl(var(--color-sidebar-foreground))"
                     : "hsl(0 0% 100% / 0.64)",
-                  background: active
-                    ? "hsl(0 0% 100% / 0.12)"
-                    : "transparent",
+                  background: active ? "hsl(0 0% 100% / 0.12)" : "transparent",
                   textDecoration: "none",
                   transition: "background 0.15s, color 0.15s",
                 }}
@@ -197,7 +194,14 @@ function WorkspaceShell({ children }: { children: ReactNode }) {
       </aside>
 
       {/* ── Main ── */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          minWidth: 0,
+        }}
+      >
         {/* Topbar */}
         <header
           style={{
@@ -232,7 +236,9 @@ function WorkspaceShell({ children }: { children: ReactNode }) {
                 : "Loading…"}
             </p>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div
+            style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}
+          >
             {/* Locale select */}
             <select
               value={locale}

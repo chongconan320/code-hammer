@@ -1,33 +1,30 @@
 "use client";
 
+import { Icon } from "@iconify/react";
 import { useWorkspace } from "@/app/workspace/workspace-console";
-
-/* ── Icons ── */
-const Icon = {
-  doc: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" /><polyline points="14 2 14 8 20 8" />
-    </svg>
-  ),
-  check: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="9 11 12 14 22 4" /><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
-    </svg>
-  ),
-  chat: (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-    </svg>
-  ),
-} as const;
 
 export default function WorkspaceOverviewPage() {
   const { t, tenant, user } = useWorkspace();
 
   const cards = [
-    { icon: Icon.doc, title: t.portal.cards[0].title, value: t.portal.cards[0].value, detail: t.portal.cards[0].detail },
-    { icon: Icon.check, title: t.portal.cards[1].title, value: t.portal.cards[1].value, detail: t.portal.cards[1].detail },
-    { icon: Icon.chat, title: t.portal.cards[2].title, value: t.portal.cards[2].value, detail: t.portal.cards[2].detail },
+    {
+      icon: <Icon icon="lucide:file-text" width="18" height="18" />,
+      title: t.portal.cards[0].title,
+      value: t.portal.cards[0].value,
+      detail: t.portal.cards[0].detail,
+    },
+    {
+      icon: <Icon icon="lucide:clipboard-check" width="18" height="18" />,
+      title: t.portal.cards[1].title,
+      value: t.portal.cards[1].value,
+      detail: t.portal.cards[1].detail,
+    },
+    {
+      icon: <Icon icon="lucide:message-square" width="18" height="18" />,
+      title: t.portal.cards[2].title,
+      value: t.portal.cards[2].value,
+      detail: t.portal.cards[2].detail,
+    },
   ];
 
   return (
@@ -37,7 +34,10 @@ export default function WorkspaceOverviewPage() {
         <div>
           <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
             {tenant
-              ? t.portal.roleLabel.replace("{role}", t.roles[tenant.membership.role])
+              ? t.portal.roleLabel.replace(
+                  "{role}",
+                  t.roles[tenant.membership.role],
+                )
               : t.portal.noRole}
           </span>
           <h3 className="mt-3 text-[1.625rem] font-bold">
@@ -50,11 +50,18 @@ export default function WorkspaceOverviewPage() {
             {[
               [t.fields.workspace, tenant?.workspace.name],
               [t.fields.displayName, tenant?.workspace.settings.displayName],
-              [t.fields.timezone, tenant?.workspace.settings.timezone ?? user?.preferences.timezone],
+              [
+                t.fields.timezone,
+                tenant?.workspace.settings.timezone ??
+                  user?.preferences.timezone,
+              ],
               [
                 t.portal.members,
                 tenant
-                  ? t.portal.memberCount.replace("{count}", String(tenant.memberships.length))
+                  ? t.portal.memberCount.replace(
+                      "{count}",
+                      String(tenant.memberships.length),
+                    )
                   : undefined,
               ],
             ].map(([label, value]) => (

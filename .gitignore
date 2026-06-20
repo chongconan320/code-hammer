@@ -8,3 +8,4 @@ bun.lockb
 *.log
 *.tsbuildinfo
 .DS_Store
+claude-code.sh
