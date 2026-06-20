@@ -1,3 +1,4 @@
+import cors from "cors";
 import type { Express } from "express";
 import express from "express";
 import swaggerUi from "swagger-ui-express";
@@ -9,34 +10,31 @@ import { registerOpenApiRoutes } from "./routes/openapi";
 import { registerProfileRoutes } from "./routes/profile";
 import { registerTenantRoutes } from "./routes/tenants";
 
+const ALLOWED_ORIGINS = [
+  process.env.WEB_URL ?? "http://localhost:3000",
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+];
+
 export function createApiServer(): Express {
   const app = express();
 
-  app.use((request, response, next) => {
-    const allowedOrigin = process.env.WEB_URL ?? "http://127.0.0.1:3000";
+  app.use(
+    cors({
+      origin(origin, callback) {
+        /* allow requests with no origin (server-to-server, curl, etc.) */
+        if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+          callback(null, true);
+          return;
+        }
 
-    if (request.headers.origin === allowedOrigin) {
-      response.header("Access-Control-Allow-Origin", allowedOrigin);
-      response.header("Access-Control-Allow-Credentials", "true");
-      response.header("Vary", "Origin");
-    }
-
-    response.header(
-      "Access-Control-Allow-Headers",
-      "Content-Type, Authorization",
-    );
-    response.header(
-      "Access-Control-Allow-Methods",
-      "GET, POST, PATCH, OPTIONS",
-    );
-
-    if (request.method === "OPTIONS") {
-      response.sendStatus(204);
-      return;
-    }
-
-    next();
-  });
+        callback(null, false);
+      },
+      credentials: true,
+      methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+      allowedHeaders: ["Content-Type", "Authorization"],
+    }),
+  );
 
   app.use(express.json());
 
