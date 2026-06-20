@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/components/toast";
 import {
   type Locale,
   dictionaries,
@@ -44,9 +45,7 @@ export function AuthConsole() {
   const [timezone, setTimezone] = useState("Asia/Kuala_Lumpur");
   const [emailUpdates, setEmailUpdates] = useState(true);
   const [busyAction, setBusyAction] = useState<string | null>(null);
-  const [message, setMessage] = useState(
-    () => dictionaries[getStoredLocale()].auth.defaultMessage,
-  );
+  const toast = useToast();
   const t = dictionaries[locale];
 
   async function submitAuth() {
@@ -73,7 +72,7 @@ export function AuthConsole() {
       const data = await response.json();
 
       if (!response.ok) {
-        setMessage(data.message ?? data.error ?? t.auth.authFailed);
+        toast.show(data.message ?? data.error ?? t.auth.authFailed, "error");
         return;
       }
 
@@ -91,12 +90,15 @@ export function AuthConsole() {
     const data = await response.json();
 
     if (!response.ok) {
-      setMessage(data.message ?? data.error ?? t.auth.resetUnavailable);
+      toast.show(
+        data.message ?? data.error ?? t.auth.resetUnavailable,
+        "error",
+      );
       setBusyAction(null);
       return;
     }
 
-    setMessage(t.auth.resetSent);
+    toast.show(t.auth.resetSent, "success");
     setBusyAction(null);
   }
 
@@ -107,7 +109,7 @@ export function AuthConsole() {
 
     setLocale(value);
     localStorage.setItem(localeStorageKey, value);
-    setMessage(dictionaries[value].auth.defaultMessage);
+    toast.show(dictionaries[value].auth.defaultMessage, "info");
   }
 
   return (
@@ -264,10 +266,6 @@ export function AuthConsole() {
                 {t.auth.resetPassword}
               </Button>
             </div>
-
-            <p className="mt-4 min-h-5 text-sm text-muted-foreground">
-              {message}
-            </p>
           </Card>
         </div>
       </section>

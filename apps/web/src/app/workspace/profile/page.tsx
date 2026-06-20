@@ -4,9 +4,11 @@ import { useState } from "react";
 import { useWorkspace } from "@/app/workspace/workspace-console";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/toast";
 
 export default function ProfilePage() {
   const { t, user, saveProfile } = useWorkspace();
+  const toast = useToast();
 
   const [name, setName] = useState(user?.name ?? "");
   const [timezone, setTimezone] = useState(
@@ -16,7 +18,6 @@ export default function ProfilePage() {
     user?.preferences.emailUpdates ?? true,
   );
   const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState("");
 
   async function handleSave() {
     setBusy(true);
@@ -24,7 +25,11 @@ export default function ProfilePage() {
       name,
       preferences: { timezone, emailUpdates },
     });
-    setMsg(err ?? t.portal.profileSaved);
+    if (err) {
+      toast.show(err, "error");
+    } else {
+      toast.show(t.portal.profileSaved, "success");
+    }
     setBusy(false);
   }
 
@@ -78,8 +83,6 @@ export default function ProfilePage() {
         <Button onClick={handleSave} disabled={busy} type="button">
           {busy ? t.portal.saving : t.fields.saveChanges}
         </Button>
-
-        {msg ? <p className="text-sm text-muted-foreground">{msg}</p> : null}
       </div>
     </div>
   );

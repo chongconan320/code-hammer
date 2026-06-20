@@ -4,12 +4,13 @@ import { useState } from "react";
 import { useWorkspace } from "@/app/workspace/workspace-console";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/toast";
 
 export default function MembersPage() {
   const { t, tenant, addMember } = useWorkspace();
+  const toast = useToast();
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState("");
 
   const isOwner = tenant?.membership.role === "owner";
 
@@ -18,9 +19,9 @@ export default function MembersPage() {
     setBusy(true);
     const err = await addMember(email.trim());
     if (err) {
-      setMsg(err);
+      toast.show(err, "error");
     } else {
-      setMsg(t.portal.memberAdded);
+      toast.show(t.portal.memberAdded, "success");
       setEmail("");
     }
     setBusy(false);
@@ -103,12 +104,6 @@ export default function MembersPage() {
           {t.portal.ownerSettingsOnly}
         </p>
       )}
-
-      {msg ? (
-        <p className="border-t border-border px-5 py-3 text-sm text-muted-foreground">
-          {msg}
-        </p>
-      ) : null}
     </div>
   );
 }

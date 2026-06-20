@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useWorkspace } from "@/app/workspace/workspace-console";
 import { apiRequest } from "@/app/client-helpers";
+import { useToast } from "@/components/toast";
 
 type PlanData = {
   plan: { id: string; name: string; limits: PlanLimits };
@@ -77,6 +78,7 @@ function UsageBar({
 
 export default function BillingPage() {
   const { t, tenant } = useWorkspace();
+  const toast = useToast();
   const [data, setData] = useState<PlanData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -87,19 +89,23 @@ export default function BillingPage() {
         const res = await apiRequest("/billing/plan", "GET");
         const json = await res.json();
         if (!res.ok) {
-          setError(json.message ?? "Could not load billing data.");
+          const msg = json.message ?? "Could not load billing data.";
+          setError(msg);
+          toast.show(msg, "error");
           return;
         }
         setData(json);
       } catch {
-        setError("Could not connect to billing service.");
+        const msg = "Could not connect to billing service.";
+        setError(msg);
+        toast.show(msg, "error");
       } finally {
         setLoading(false);
       }
     }
 
     void load();
-  }, []);
+  }, [toast]);
 
   if (loading) {
     return (

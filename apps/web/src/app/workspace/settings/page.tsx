@@ -4,10 +4,12 @@ import { useState } from "react";
 import { useWorkspace } from "@/app/workspace/workspace-console";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/toast";
 
 export default function WorkspaceSettingsPage() {
   const { t, tenant, createOrganization, saveWorkspaceSettings } =
     useWorkspace();
+  const toast = useToast();
 
   const [orgName, setOrgName] = useState(tenant?.organization.name ?? "");
   const [wsName, setWsName] = useState(tenant?.workspace.name ?? "");
@@ -15,7 +17,6 @@ export default function WorkspaceSettingsPage() {
     tenant?.workspace.settings.displayName ?? tenant?.workspace.name ?? "",
   );
   const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState("");
 
   async function handleSave() {
     setBusy(true);
@@ -26,9 +27,14 @@ export default function WorkspaceSettingsPage() {
           workspaceName: wsName,
           workspaceDisplayName: display,
         });
-    setMsg(
-      err ?? (tenant ? t.portal.workspaceSaved : t.portal.workspaceCreated),
-    );
+    if (err) {
+      toast.show(err, "error");
+    } else {
+      toast.show(
+        tenant ? t.portal.workspaceSaved : t.portal.workspaceCreated,
+        "success",
+      );
+    }
     setBusy(false);
   }
 
@@ -96,8 +102,6 @@ export default function WorkspaceSettingsPage() {
             {t.portal.ownerSettingsOnly}
           </p>
         )}
-
-        {msg ? <p className="text-sm text-muted-foreground">{msg}</p> : null}
       </div>
     </div>
   );
