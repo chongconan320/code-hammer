@@ -30,7 +30,9 @@ This repository starts with `CORE-FR-011: Repository Setup`: a Bun/Turborepo mon
 
 - Turborepo for monorepo task orchestration
 - Bun for runtime, package management, and test execution
-- Next.js, React, TypeScript, and Tailwind-ready styling for the web app
+- Next.js, React, TypeScript, Tailwind CSS, and shadcn-style components for the web app
+- CSS-variable theme tokens in the global stylesheet for centralized color and shadow control
+- First-class i18n dictionaries for English, Simplified Chinese, and Bahasa Melayu
 - Express for the HTTP API and middleware layer
 - Drizzle ORM and PostgreSQL for application data
 - Milvus for vector search and knowledge retrieval
@@ -45,6 +47,11 @@ This repository starts with `CORE-FR-011: Repository Setup`: a Bun/Turborepo mon
 - Every endpoint with request input must validate that input with Zod before handler logic runs.
 - Swagger UI is available at `/docs` during local API development.
 - Raw OpenAPI JSON is available at `/openapi.json`.
+
+## Current Core Features
+
+- `CORE-FR-001`: Authentication and user profile foundation
+- `CORE-FR-011`: Repository setup
 
 ## Commands
 

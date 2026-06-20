@@ -1,0 +1,236 @@
+export const locales = ["en", "zh-CN", "ms"] as const;
+
+export type Locale = (typeof locales)[number];
+
+export const localeLabels: Record<Locale, string> = {
+  en: "English",
+  "zh-CN": "简体中文",
+  ms: "Bahasa Melayu",
+};
+
+export function isLocale(value: string): value is Locale {
+  return locales.includes(value as Locale);
+}
+
+const englishDictionary = {
+  brand: "Code Hammer",
+  auth: {
+    heroTitle: "Your AI back office workspace.",
+    heroBody:
+      "Manage documents, workflows, integrations, and customer operations from one focused portal.",
+    capabilities: [
+      "Document intelligence",
+      "Workflow automation",
+      "Knowledge search",
+    ],
+    workspaceAccess: "Workspace access",
+    signInTitle: "Sign in to continue",
+    signUpTitle: "Create workspace",
+    signIn: "Sign in",
+    signUp: "Sign up",
+    openPortal: "Open portal",
+    createAccount: "Create account",
+    resetPassword: "Reset password",
+    defaultMessage: "Sign in to open your workspace.",
+    authFailed: "Authentication failed.",
+    resetUnavailable: "Password reset unavailable.",
+    resetSent: "If the account exists, reset instructions will be sent.",
+    workspaceCreated: "Workspace created.",
+    welcomeBack: "Welcome back.",
+    signedOut: "Signed out.",
+  },
+  portal: {
+    workspacePortal: "Workspace Portal",
+    greeting: "Good to see you, {name}",
+    commandCenter: "Back office command center",
+    refresh: "Refresh",
+    signOut: "Sign out",
+    nav: ["Overview", "Knowledge", "Workflows", "Integrations"],
+    cards: [
+      {
+        title: "Knowledge",
+        value: "Ready",
+        detail: "Documents, folders, and retrieval workspace",
+      },
+      {
+        title: "Workflow",
+        value: "0 active",
+        detail: "Automation runs will appear here",
+      },
+      {
+        title: "Messages",
+        value: "Drafts",
+        detail: "Email and customer replies",
+      },
+    ],
+    activityTitle: "Workspace Activity",
+    activityItems: [
+      "Upload business documents",
+      "Connect your first integration",
+      "Create an approval workflow",
+    ],
+    pending: "Pending",
+    profile: "Profile",
+    profileUnavailable: "Profile unavailable.",
+    profileRefreshed: "Profile refreshed.",
+    profileUpdateFailed: "Profile update failed.",
+    profileSaved: "Profile saved.",
+    signOutFailed: "Sign out failed.",
+  },
+  fields: {
+    language: "Language",
+    name: "Name",
+    email: "Email",
+    password: "Password",
+    timezone: "Timezone",
+    emailUpdates: "Email updates",
+    saveChanges: "Save changes",
+  },
+};
+
+type Dictionary = typeof englishDictionary;
+
+export const dictionaries = {
+  en: englishDictionary,
+  "zh-CN": {
+    brand: "Code Hammer",
+    auth: {
+      heroTitle: "你的 AI 后台工作区。",
+      heroBody: "在一个专注的门户中管理文档、流程、集成和客户运营。",
+      capabilities: ["文档智能", "流程自动化", "知识搜索"],
+      workspaceAccess: "工作区访问",
+      signInTitle: "登录以继续",
+      signUpTitle: "创建工作区",
+      signIn: "登录",
+      signUp: "注册",
+      openPortal: "打开门户",
+      createAccount: "创建账号",
+      resetPassword: "重置密码",
+      defaultMessage: "登录以打开你的工作区。",
+      authFailed: "认证失败。",
+      resetUnavailable: "暂时无法重置密码。",
+      resetSent: "如果账号存在，系统会发送重置说明。",
+      workspaceCreated: "工作区已创建。",
+      welcomeBack: "欢迎回来。",
+      signedOut: "已退出登录。",
+    },
+    portal: {
+      workspacePortal: "工作区门户",
+      greeting: "欢迎回来，{name}",
+      commandCenter: "后台运营中心",
+      refresh: "刷新",
+      signOut: "退出登录",
+      nav: ["概览", "知识库", "流程", "集成"],
+      cards: [
+        {
+          title: "知识库",
+          value: "就绪",
+          detail: "文档、文件夹和检索工作区",
+        },
+        {
+          title: "流程",
+          value: "0 个启用",
+          detail: "自动化运行记录会显示在这里",
+        },
+        {
+          title: "消息",
+          value: "草稿",
+          detail: "邮件和客户回复",
+        },
+      ],
+      activityTitle: "工作区动态",
+      activityItems: ["上传业务文档", "连接第一个集成", "创建审批流程"],
+      pending: "待处理",
+      profile: "个人资料",
+      profileUnavailable: "无法读取个人资料。",
+      profileRefreshed: "个人资料已刷新。",
+      profileUpdateFailed: "个人资料更新失败。",
+      profileSaved: "个人资料已保存。",
+      signOutFailed: "退出登录失败。",
+    },
+    fields: {
+      language: "语言",
+      name: "姓名",
+      email: "邮箱",
+      password: "密码",
+      timezone: "时区",
+      emailUpdates: "邮件通知",
+      saveChanges: "保存更改",
+    },
+  },
+  ms: {
+    brand: "Code Hammer",
+    auth: {
+      heroTitle: "Ruang kerja back office AI anda.",
+      heroBody:
+        "Urus dokumen, aliran kerja, integrasi dan operasi pelanggan dalam satu portal fokus.",
+      capabilities: [
+        "Kecerdasan dokumen",
+        "Automasi aliran kerja",
+        "Carian ilmu",
+      ],
+      workspaceAccess: "Akses ruang kerja",
+      signInTitle: "Log masuk untuk teruskan",
+      signUpTitle: "Cipta ruang kerja",
+      signIn: "Log masuk",
+      signUp: "Daftar",
+      openPortal: "Buka portal",
+      createAccount: "Cipta akaun",
+      resetPassword: "Tetapkan semula kata laluan",
+      defaultMessage: "Log masuk untuk buka ruang kerja anda.",
+      authFailed: "Pengesahan gagal.",
+      resetUnavailable: "Tetapan semula kata laluan tidak tersedia.",
+      resetSent: "Jika akaun wujud, arahan tetapan semula akan dihantar.",
+      workspaceCreated: "Ruang kerja telah dicipta.",
+      welcomeBack: "Selamat kembali.",
+      signedOut: "Telah log keluar.",
+    },
+    portal: {
+      workspacePortal: "Portal Ruang Kerja",
+      greeting: "Selamat kembali, {name}",
+      commandCenter: "Pusat arahan back office",
+      refresh: "Segar semula",
+      signOut: "Log keluar",
+      nav: ["Gambaran", "Ilmu", "Aliran kerja", "Integrasi"],
+      cards: [
+        {
+          title: "Ilmu",
+          value: "Sedia",
+          detail: "Dokumen, folder dan ruang kerja carian",
+        },
+        {
+          title: "Aliran kerja",
+          value: "0 aktif",
+          detail: "Jalankan automasi akan muncul di sini",
+        },
+        {
+          title: "Mesej",
+          value: "Draf",
+          detail: "E-mel dan balasan pelanggan",
+        },
+      ],
+      activityTitle: "Aktiviti Ruang Kerja",
+      activityItems: [
+        "Muat naik dokumen perniagaan",
+        "Sambung integrasi pertama",
+        "Cipta aliran kelulusan",
+      ],
+      pending: "Menunggu",
+      profile: "Profil",
+      profileUnavailable: "Profil tidak tersedia.",
+      profileRefreshed: "Profil telah disegar semula.",
+      profileUpdateFailed: "Kemas kini profil gagal.",
+      profileSaved: "Profil telah disimpan.",
+      signOutFailed: "Log keluar gagal.",
+    },
+    fields: {
+      language: "Bahasa",
+      name: "Nama",
+      email: "E-mel",
+      password: "Kata laluan",
+      timezone: "Zon masa",
+      emailUpdates: "Kemas kini e-mel",
+      saveChanges: "Simpan perubahan",
+    },
+  },
+} satisfies Record<Locale, Dictionary>;
