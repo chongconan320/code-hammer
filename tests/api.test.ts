@@ -81,6 +81,8 @@ test("openapi document includes registered endpoints", async () => {
   expect(
     body.paths["/workspaces/{workspaceId}/settings"].patch.operationId,
   ).toBe("updateWorkspaceSettings");
+  expect(body.paths["/billing/plan"].get.operationId).toBe("getBillingPlan");
+  expect(body.paths["/billing/usage"].get.operationId).toBe("getBillingUsage");
 });
 
 test("auth flow supports signup, profile update, signout, signin, and password reset", async () => {
@@ -339,6 +341,67 @@ test("tenant workspace flow creates owners, denies other tenants, and scopes set
   expect(outsiderListResponse.status).toBe(200);
   expect(await outsiderListResponse.json()).toEqual({
     organizations: [],
+  });
+});
+
+test("billing plan endpoint returns subscription and usage after organization creation", async () => {
+  const ownerCookie = await signUpCookie(`billing-${Date.now()}@example.com`);
+
+  const createResponse = await jsonRequest(
+    "/organizations",
+    {
+      name: "Billing Clinic",
+      workspaceName: "Billing Workspace",
+    },
+    {
+      cookie: ownerCookie,
+    },
+  );
+
+  expect(createResponse.status).toBe(201);
+
+  const response = await fetch(`${baseUrl}/billing/plan`, {
+    headers: {
+      cookie: ownerCookie,
+    },
+  });
+  const body = await response.json();
+
+  expect(response.status).toBe(200);
+  expect(body).toMatchObject({
+    plan: {
+      id: "free",
+      name: "Free",
+    },
+    subscription: {
+      planId: "free",
+      status: "trialing",
+    },
+    limits: {
+      maxDocuments: 10,
+      maxAiMessages: 50,
+    },
+    usage: {
+      documents: 0,
+      aiMessages: 0,
+      storageBytes: 0,
+      workflowRuns: 0,
+    },
+  });
+});
+
+test("billing plan endpoint returns controlled 404 without an organization", async () => {
+  const cookie = await signUpCookie(`no-billing-${Date.now()}@example.com`);
+
+  const response = await fetch(`${baseUrl}/billing/plan`, {
+    headers: {
+      cookie,
+    },
+  });
+
+  expect(response.status).toBe(404);
+  expect(await response.json()).toMatchObject({
+    error: "no_organization",
   });
 });
 

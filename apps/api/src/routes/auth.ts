@@ -100,6 +100,7 @@ function handleAuthError(
   response: Response,
   next: (error: unknown) => void,
 ) {
+  console.error(error);
   if (error instanceof AuthError) {
     response.status(error.statusCode).json({
       error: error.code,

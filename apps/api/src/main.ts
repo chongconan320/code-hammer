@@ -1,4 +1,7 @@
 import { createApiServer } from "./app";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const port = Number(process.env.API_PORT ?? 3001);
 

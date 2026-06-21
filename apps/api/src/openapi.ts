@@ -47,6 +47,10 @@ export const openApiDocument = {
       name: "Tenant",
       description: "Organization, membership, and workspace endpoints",
     },
+    {
+      name: "Billing",
+      description: "Plans, subscriptions, usage, and limits",
+    },
   ],
   components: {
     schemas: {
@@ -709,6 +713,42 @@ export const openApiDocument = {
           "400": validationErrorResponse,
           "401": unauthorizedResponse,
           "403": forbiddenResponse,
+        },
+      },
+    },
+    "/billing/plan": {
+      get: {
+        tags: ["Billing"],
+        summary: "Get the current organization billing plan",
+        operationId: "getBillingPlan",
+        responses: {
+          "200": {
+            description: "Plan, subscription, limits, and usage.",
+            content: jsonContent,
+          },
+          "401": unauthorizedResponse,
+          "404": {
+            description: "No organization or subscription exists.",
+            content: jsonContent,
+          },
+        },
+      },
+    },
+    "/billing/usage": {
+      get: {
+        tags: ["Billing"],
+        summary: "Get the current organization usage summary",
+        operationId: "getBillingUsage",
+        responses: {
+          "200": {
+            description: "Usage summary and limits.",
+            content: jsonContent,
+          },
+          "401": unauthorizedResponse,
+          "404": {
+            description: "No organization exists.",
+            content: jsonContent,
+          },
         },
       },
     },

@@ -8,7 +8,7 @@ import {
   WorkspaceProvider,
   useWorkspace,
 } from "@/app/workspace/workspace-console";
-import { apiUrl } from "@/app/client-helpers";
+import { apiRequest } from "@/app/client-helpers";
 import { locales, localeLabels } from "@/i18n";
 
 /* ── Sidebar nav items ── */
@@ -56,14 +56,13 @@ function WorkspaceShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   async function handleSignOut() {
-    await fetch(`${apiUrl()}/auth/signout`, {
-      method: "POST",
-      credentials: "include",
-    });
+    await apiRequest("/auth/signout", "POST");
     window.location.assign("/");
   }
 
-  const pageTitle = PAGE_TITLES[pathname] ?? "Workspace";
+  const pageTitle = pathname
+    ? (PAGE_TITLES[pathname] ?? "Workspace")
+    : "Workspace";
 
   return (
     <div style={{ display: "flex", minHeight: "100dvh" }}>

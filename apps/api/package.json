@@ -17,6 +17,7 @@
     "@code-hammer/queue": "workspace:*",
     "@code-hammer/shared": "workspace:*",
     "cookie-parser": "^1.4.7",
+    "dotenv": "^17.4.2",
     "drizzle-orm": "^0.38.4",
     "express": "^4.21.2",
     "postgres": "^3.4.5",

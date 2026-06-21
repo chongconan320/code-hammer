@@ -48,6 +48,7 @@ const TOAST_COLORS: Record<ToastType, string> = {
 };
 
 const TOAST_DURATION = 4000;
+const MAX_TOASTS = 3;
 let nextId = 0;
 
 /* ── Provider ── */
@@ -70,7 +71,18 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const show = useCallback(
     (message: string, type: ToastType = "info") => {
       const id = nextId++;
-      setToasts((prev) => [...prev, { id, message, type }]);
+      setToasts((prev) => {
+        const next = [...prev, { id, message, type }];
+        const removed = next.slice(0, Math.max(0, next.length - MAX_TOASTS));
+        for (const toast of removed) {
+          const timer = timersRef.current.get(toast.id);
+          if (timer) {
+            clearTimeout(timer);
+            timersRef.current.delete(toast.id);
+          }
+        }
+        return next.slice(-MAX_TOASTS);
+      });
 
       const timer = setTimeout(() => {
         remove(id);

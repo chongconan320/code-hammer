@@ -1,5 +1,10 @@
 import type { Locale } from "@/i18n";
 import { isLocale } from "@/i18n";
+import axios, {
+  AxiosHeaders,
+  type AxiosError,
+  type AxiosRequestConfig,
+} from "axios";
 
 export type PublicUser = {
   id: string;
@@ -37,6 +42,39 @@ export type TenantSnapshot = {
 
 const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL;
 export const localeStorageKey = "code-hammer-locale";
+const MAX_RETRIES = 2;
+
+export const apiClient = axios.create({
+  withCredentials: true,
+});
+
+apiClient.interceptors.request.use((config) => {
+  config.baseURL = apiUrl();
+  return config;
+});
+
+apiClient.interceptors.response.use(undefined, async (error: AxiosError) => {
+  const config = error.config as
+    | (AxiosRequestConfig & { retryCount?: number })
+    | undefined;
+  const status = error.response?.status;
+  const shouldRetry = !status || status >= 500;
+
+  if (!config || !shouldRetry) {
+    throw error;
+  }
+
+  config.retryCount = config.retryCount ?? 0;
+  if (config.retryCount >= MAX_RETRIES) {
+    if (typeof window !== "undefined") {
+      window.location.assign("/500");
+    }
+    throw error;
+  }
+
+  config.retryCount += 1;
+  return apiClient(config);
+});
 
 export function getStoredLocale(): Locale {
   if (typeof window === "undefined") {
@@ -47,21 +85,31 @@ export function getStoredLocale(): Locale {
   return storedLocale && isLocale(storedLocale) ? storedLocale : "en";
 }
 
-export function apiRequest(
+export async function apiRequest(
   path: string,
   method: "GET" | "POST" | "PATCH",
   body?: unknown,
 ) {
-  return fetch(`${apiUrl()}${path}`, {
+  const response = await apiClient.request({
+    url: path,
     method,
-    credentials: "include",
-    headers: body
-      ? {
-          "content-type": "application/json",
-        }
-      : undefined,
-    body: body ? JSON.stringify(body) : undefined,
+    data: body,
+    headers: body ? { "content-type": "application/json" } : undefined,
+    validateStatus: (status) => status < 500,
   });
+
+  return {
+    ok: response.status >= 200 && response.status < 300,
+    status: response.status,
+    headers: new Headers(
+      Object.entries(
+        response.headers instanceof AxiosHeaders
+          ? response.headers.toJSON()
+          : response.headers,
+      ).map(([key, value]) => [key, String(value)]),
+    ),
+    json: async () => response.data,
+  };
 }
 
 export function apiUrl() {
