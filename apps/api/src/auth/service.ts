@@ -5,6 +5,13 @@ import type {
   UpdateProfileRequest,
   UserPreferences,
 } from "@code-hammer/shared";
+import {
+  createUser,
+  findUserByEmail as findDbUserByEmail,
+  findUserById as findDbUserById,
+  updateUserPassword,
+  updateUserProfile,
+} from "./queries";
 
 type StoredUser = PublicUser & {
   passwordHash: string;
@@ -29,23 +36,19 @@ const defaultPreferences: UserPreferences = {
 };
 
 export class AuthService {
-  private readonly usersById = new Map<string, StoredUser>();
-  private readonly userIdsByEmail = new Map<string, string>();
   private readonly sessionsByToken = new Map<string, Session>();
   private readonly resetTokensByToken = new Map<string, PasswordResetToken>();
 
   async signUp(input: SignUpRequest) {
     const email = normalizeEmail(input.email);
 
-    if (this.userIdsByEmail.has(email)) {
+    if (await findDbUserByEmail(email)) {
       throw new AuthError("email_taken", "Email is already registered.", 409);
     }
 
-    const userId = randomId("usr");
     const passwordSalt = randomBytes(16).toString("hex");
     const passwordHash = hashPassword(input.password, passwordSalt);
-    const user: StoredUser = {
-      id: userId,
+    const user = await createUser({
       name: input.name,
       email,
       preferences: {
@@ -54,19 +57,24 @@ export class AuthService {
       },
       passwordHash,
       passwordSalt,
-    };
+    });
 
-    this.usersById.set(userId, user);
-    this.userIdsByEmail.set(email, userId);
+    if (!user) {
+      throw new AuthError(
+        "database_unavailable",
+        "Database connection is required.",
+        503,
+      );
+    }
 
     return {
       user: toPublicUser(user),
-      sessionToken: this.createSession(userId),
+      sessionToken: this.createSession(user.id),
     };
   }
 
   async signIn(emailInput: string, password: string) {
-    const user = this.findUserByEmail(emailInput);
+    const user = await this.findUserByEmail(emailInput);
     if (
       !user ||
       !verifyPassword(password, user.passwordSalt, user.passwordHash)
@@ -101,12 +109,12 @@ export class AuthService {
       return undefined;
     }
 
-    const user = this.usersById.get(session.userId);
+    const user = await this.findUserById(session.userId);
     return user ? toPublicUser(user) : undefined;
   }
 
   async findPublicUserByEmail(emailInput: string) {
-    const user = this.findUserByEmail(emailInput);
+    const user = await this.findUserByEmail(emailInput);
     return user ? toPublicUser(user) : undefined;
   }
 
@@ -116,28 +124,39 @@ export class AuthService {
       throw new AuthError("unauthorized", "Authentication is required.", 401);
     }
 
-    const user = this.usersById.get(session.userId);
+    const user = await this.findUserById(session.userId);
     if (!user) {
       throw new AuthError("unauthorized", "Authentication is required.", 401);
     }
 
-    if (input.name) {
-      user.name = input.name;
+    const nextUser = {
+      ...user,
+      ...(input.name ? { name: input.name } : {}),
+      ...(input.preferences
+        ? { preferences: { ...user.preferences, ...input.preferences } }
+        : {}),
+    };
+
+    const dbUser = isDatabaseUserId(user.id)
+      ? await updateUserProfile(user.id, {
+          ...(input.name ? { name: input.name } : {}),
+          ...(input.preferences ? { preferences: nextUser.preferences } : {}),
+        })
+      : undefined;
+
+    if (dbUser) {
+      return toPublicUser(dbUser);
     }
 
-    if (input.preferences) {
-      user.preferences = {
-        ...user.preferences,
-        ...input.preferences,
-      };
-    }
-
-    this.usersById.set(user.id, user);
-    return toPublicUser(user);
+    throw new AuthError(
+      "database_unavailable",
+      "Database connection is required.",
+      503,
+    );
   }
 
   async requestPasswordReset(emailInput: string) {
-    const user = this.findUserByEmail(emailInput);
+    const user = await this.findUserByEmail(emailInput);
     if (!user) {
       return undefined;
     }
@@ -162,7 +181,7 @@ export class AuthService {
       );
     }
 
-    const user = this.usersById.get(resetToken.userId);
+    const user = await this.findUserById(resetToken.userId);
     if (!user) {
       throw new AuthError(
         "invalid_reset_token",
@@ -171,9 +190,21 @@ export class AuthService {
       );
     }
 
-    user.passwordSalt = randomBytes(16).toString("hex");
-    user.passwordHash = hashPassword(password, user.passwordSalt);
-    this.usersById.set(user.id, user);
+    const passwordSalt = randomBytes(16).toString("hex");
+    const passwordHash = hashPassword(password, passwordSalt);
+    const dbUser = isDatabaseUserId(user.id)
+      ? await updateUserPassword(user.id, {
+          passwordHash,
+          passwordSalt,
+        })
+      : undefined;
+    if (!dbUser) {
+      throw new AuthError(
+        "database_unavailable",
+        "Database connection is required.",
+        503,
+      );
+    }
     this.resetTokensByToken.delete(token);
 
     for (const [sessionToken, session] of this.sessionsByToken.entries()) {
@@ -193,9 +224,16 @@ export class AuthService {
     return token;
   }
 
-  private findUserByEmail(emailInput: string) {
-    const userId = this.userIdsByEmail.get(normalizeEmail(emailInput));
-    return userId ? this.usersById.get(userId) : undefined;
+  private async findUserByEmail(emailInput: string) {
+    return findDbUserByEmail(normalizeEmail(emailInput));
+  }
+
+  private async findUserById(userId: string) {
+    if (!isDatabaseUserId(userId)) {
+      return undefined;
+    }
+
+    return findDbUserById(userId);
   }
 }
 
@@ -213,6 +251,12 @@ export const authService = new AuthService();
 
 function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
+}
+
+function isDatabaseUserId(userId: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    userId,
+  );
 }
 
 function randomId(prefix: string) {

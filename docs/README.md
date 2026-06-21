@@ -102,6 +102,7 @@ It should track:
 - Express API scaffold
 - Shared packages
 - Drizzle/PostgreSQL setup
+- Drizzle ORM query usage in API feature code instead of raw SQL or `packages/db` repositories
 - Mastra AI package
 - BullMQ/Redis worker package
 - Type safety

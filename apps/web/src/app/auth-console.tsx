@@ -40,7 +40,7 @@ export function AuthConsole() {
   const [locale, setLocale] = useState<Locale>(getStoredLocale);
   const [mode, setMode] = useState<AuthMode>("signin");
   const [name, setName] = useState("Conan Chong");
-  const [email, setEmail] = useState("conan@example.com");
+  const [email, setEmail] = useState("admin@codehammer.local");
   const [password, setPassword] = useState("strong-password");
   const [timezone, setTimezone] = useState("Asia/Kuala_Lumpur");
   const [emailUpdates, setEmailUpdates] = useState(true);

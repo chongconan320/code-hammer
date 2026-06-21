@@ -35,8 +35,7 @@ export type TenantSnapshot = {
   }>;
 };
 
-export const apiUrl =
-  process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:3001";
+const configuredApiUrl = process.env.NEXT_PUBLIC_API_URL;
 export const localeStorageKey = "code-hammer-locale";
 
 export function getStoredLocale(): Locale {
@@ -53,7 +52,7 @@ export function apiRequest(
   method: "GET" | "POST" | "PATCH",
   body?: unknown,
 ) {
-  return fetch(`${apiUrl}${path}`, {
+  return fetch(`${apiUrl()}${path}`, {
     method,
     credentials: "include",
     headers: body
@@ -63,4 +62,16 @@ export function apiRequest(
       : undefined,
     body: body ? JSON.stringify(body) : undefined,
   });
+}
+
+export function apiUrl() {
+  if (
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1")
+  ) {
+    return `${window.location.protocol}//${window.location.hostname}:3001`;
+  }
+
+  return configuredApiUrl ?? "http://127.0.0.1:3001";
 }

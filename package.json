@@ -6,6 +6,7 @@
   "workspaces": ["apps/*", "packages/*"],
   "scripts": {
     "dev": "turbo run dev",
+    "db:init": "bun --cwd packages/db drizzle-kit push --config drizzle.config.ts && bun --cwd packages/db scripts/seed-user.ts",
     "build": "bun run scripts/check-workspace.ts build && turbo run build",
     "lint": "bun run scripts/check-workspace.ts lint && biome check .",
     "format": "bun run scripts/check-workspace.ts format && biome format . --write",

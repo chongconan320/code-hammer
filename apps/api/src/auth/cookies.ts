@@ -3,17 +3,7 @@ import type { Request, Response } from "express";
 export const sessionCookieName = "ch_session";
 
 export function readSessionToken(request: Request): string | undefined {
-  const cookieHeader = request.headers.cookie;
-  if (!cookieHeader) {
-    return undefined;
-  }
-
-  const cookies = cookieHeader.split(";").map((cookie) => cookie.trim());
-  const sessionCookie = cookies.find((cookie) =>
-    cookie.startsWith(`${sessionCookieName}=`),
-  );
-
-  return sessionCookie?.slice(sessionCookieName.length + 1);
+  return request.cookies?.[sessionCookieName];
 }
 
 export function setSessionCookie(response: Response, token: string) {

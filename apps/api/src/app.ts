@@ -1,4 +1,5 @@
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import type { Express } from "express";
 import express from "express";
 import swaggerUi from "swagger-ui-express";
@@ -36,6 +37,7 @@ export function createApiServer(): Express {
     }),
   );
 
+  app.use(cookieParser());
   app.use(express.json());
 
   registerOpenApiRoutes(app);

@@ -40,7 +40,7 @@ The architecture should support multiple verticals while keeping the codebase sm
 | Language                | TypeScript                  | End-to-end type safety                          |
 | Backend                 | Express                     | Lightweight HTTP API and middleware layer       |
 | Database                | PostgreSQL                  | Primary relational data store                   |
-| ORM                     | Drizzle                     | Typed schema and migrations                     |
+| ORM                     | Drizzle                     | Typed schema, migrations, and database queries  |
 | AI orchestration        | Mastra                      | Agents, workflows, and AI tool orchestration    |
 | Validation              | Zod                         | Runtime validation and shared contracts         |
 | Code quality            | Biome                       | Formatting and linting                          |
@@ -171,15 +171,14 @@ Organization rule:
 
 ### `packages/db`
 
-Database schema and persistence.
+Database schema only.
 
 Contains:
 
 - Drizzle schema
-- Migrations
-- Database client
-- Repository helpers
-- Seed scripts if needed
+- Drizzle relations and indexes
+- Migration/schema metadata
+- Operational seed scripts if needed
 
 Organization rule:
 
@@ -187,6 +186,10 @@ Organization rule:
 - Database schema means Drizzle table definitions, relations, indexes, migrations, and persistence-only database types.
 - Split Drizzle tables by feature file, for example `src/auth.ts`, `src/tenant.ts`, and `src/documents.ts`.
 - Keep `src/index.ts` as a barrel export. Do not define tables directly in `src/index.ts`.
+- Do not put API query helpers, repositories, or runtime database clients in `packages/db/src`.
+- API query code should live under `apps/api/src/<feature>` beside the service that owns the behavior.
+- API services should share one singleton Drizzle database client from `apps/api/src`, instead of creating clients per service or per file.
+- Avoid raw SQL in application code. Use raw SQL only for database initialization, migrations, or a measured query Drizzle cannot express cleanly.
 
 ### `packages/ai`
 

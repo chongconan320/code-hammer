@@ -8,6 +8,7 @@ import {
   WorkspaceProvider,
   useWorkspace,
 } from "@/app/workspace/workspace-console";
+import { apiUrl } from "@/app/client-helpers";
 import { locales, localeLabels } from "@/i18n";
 
 /* ── Sidebar nav items ── */
@@ -55,7 +56,7 @@ function WorkspaceShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   async function handleSignOut() {
-    await fetch("http://127.0.0.1:3001/auth/signout", {
+    await fetch(`${apiUrl()}/auth/signout`, {
       method: "POST",
       credentials: "include",
     });

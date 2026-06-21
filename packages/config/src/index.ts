@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const environmentSchema = z.object({
-  POSTGRES_HOST: z.string().min(1),
+  POSTGRES_HOST: z.string().min(1).transform(postgresHost),
   POSTGRES_PORT: z.coerce.number().int().positive().default(5432),
   POSTGRES_USER: z.string().min(1),
   POSTGRES_PASSWORD: z.string().min(1),
@@ -48,4 +48,12 @@ export function postgresUrl(
     environment.POSTGRES_SSL ? "require" : "disable",
   );
   return url.toString();
+}
+
+function postgresHost(host: string) {
+  if (!host.includes("://")) {
+    return host;
+  }
+
+  return new URL(host).hostname;
 }
